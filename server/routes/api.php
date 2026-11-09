@@ -3,15 +3,26 @@
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AuthController::class, 'register']);
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::prefix('auth')->group(function () {
 
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+    Route::post('/register', [AuthController::class, 'register']);
 
-Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
 
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/logout', [AuthController::class, 'logout']);
+
+        Route::get('/user', [AuthController::class, 'user']);
+    });
 });

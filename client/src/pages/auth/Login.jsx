@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -69,13 +70,15 @@ export default function Login() {
 
   return (
     <Card>
-      <h1 className="mb-2 text-3xl font-bold text-slate-900">Welcome Back</h1>
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-slate-900">Welcome Back</h1>
 
-      <p className="mb-6 text-sm text-slate-500">
-        Sign in to your JobSphere account.
-      </p>
+        <p className="mt-2 text-sm text-slate-500">
+          Sign in to continue to JobSphere.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <Input
           label="Email"
           type="email"
@@ -98,10 +101,31 @@ export default function Login() {
           required
         />
 
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
         <Button type="submit" disabled={loading}>
           {loading ? "Signing In..." : "Login"}
         </Button>
       </form>
+
+      <div className="mt-6 border-t border-slate-200 pt-6 text-center">
+        <p className="text-sm text-slate-600">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-semibold text-blue-600 hover:text-blue-700"
+          >
+            Register
+          </Link>
+        </p>
+      </div>
     </Card>
   );
 }

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('otps', function (Blueprint $table) {
+
             $table->id();
 
             $table->foreignId('user_id')
@@ -24,11 +25,24 @@ return new class extends Migration
 
             $table->timestamp('expires_at');
 
-            $table->unsignedTinyInteger('attempts')->default(0);
+            $table->unsignedTinyInteger('attempts')
+                ->default(0);
 
             $table->timestamps();
 
+            /*
+            |--------------------------------------------------------------------------
+            | Indexes
+            |--------------------------------------------------------------------------
+            */
+
+            $table->index('user_id');
+
+            $table->index('purpose');
+
             $table->index(['user_id', 'purpose']);
+
+            $table->index('expires_at');
         });
     }
 

@@ -6,16 +6,48 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class VerifyOtpRequest extends FormRequest
 {
+    /**
+     * Determine whether the user is authorized.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * Validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'otp' => ['required', 'digits:6'],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns',
+            ],
+
+            'otp' => [
+                'required',
+                'digits:6',
+            ],
+        ];
+    }
+
+    /**
+     * Custom validation messages.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Enter a valid email address.',
+
+            'otp.required' => 'OTP is required.',
+            'otp.digits' => 'OTP must be exactly 6 digits.',
         ];
     }
 }

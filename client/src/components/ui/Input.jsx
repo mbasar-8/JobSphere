@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
 export default function Input({
   label,
   type = "text",
@@ -9,6 +12,12 @@ export default function Input({
   required = false,
   disabled = false,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isPassword = type === "password";
+
+  const inputType = isPassword ? (showPassword ? "text" : "password") : type;
+
   return (
     <div className="space-y-2">
       {label && (
@@ -21,31 +30,37 @@ export default function Input({
         </label>
       )}
 
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={`
-          w-full
-          rounded-xl
-          border
-          px-4
-          py-3
-          outline-none
-          transition
-          ${
-            error
-              ? "border-red-500 focus:ring-2 focus:ring-red-500"
-              : "border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-          }
-          disabled:bg-slate-100
-          disabled:cursor-not-allowed
-        `}
-      />
+      <div className="relative">
+        <input
+          id={name}
+          name={name}
+          type={inputType}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={`
+            w-full rounded-xl border px-4 py-3 outline-none transition
+            ${isPassword ? "pr-12" : ""}
+            ${
+              error
+                ? "border-red-500 focus:ring-2 focus:ring-red-500"
+                : "border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            }
+            disabled:cursor-not-allowed disabled:bg-slate-100
+          `}
+        />
+
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        )}
+      </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>

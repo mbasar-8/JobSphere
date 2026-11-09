@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\VerifyOtpRequest;
-use App\Models\User;
-use App\Models\Otp;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResendOtpRequest;
+use App\Http\Requests\Auth\VerifyOtpRequest;
+use App\Models\Otp;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
@@ -20,10 +22,15 @@ class AuthController extends Controller
 
             $user = User::create([
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $request->password,
                 'role' => $request->role,
-                'status' => 'pending',
+                'status' => 'pending_verification',
             ]);
+
+            // Remove previous email verification OTPs
+            Otp::where('user_id', $user->id)
+                ->where('purpose', 'email_verification')
+                ->delete();
 
             $otp = random_int(100000, 999999);
 
@@ -43,7 +50,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Registration successful.',
+            'message' => 'Registration successful. Please verify your email using the OTP.',
             'data' => [
                 'user' => [
                     'id' => $result['user']->id,
@@ -62,7 +69,7 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'User not found.',
@@ -72,44 +79,44 @@ class AuthController extends Controller
         if ($user->status === 'active') {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email already verified.',
+                'message' => 'Email is already verified.',
             ], 422);
         }
 
         $otp = $user->otps()
             ->where('purpose', 'email_verification')
-            ->latest()
+            ->latest('id')
             ->first();
 
-        if (!$otp) {
+        if (! $otp) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'OTP not found.',
             ], 404);
         }
 
-        // Expiry check
         if ($otp->expires_at->isPast()) {
+
             $otp->delete();
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'OTP has expired.',
+                'message' => 'OTP has expired. Please request a new OTP.',
             ], 422);
         }
 
-        // Attempt limit
         if ($otp->attempts >= 5) {
+
             $otp->delete();
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Maximum OTP attempts exceeded.',
+                'message' => 'Maximum OTP attempts exceeded. Please request a new OTP.',
             ], 429);
         }
 
-        // Verify OTP
-        if (!Hash::check($request->otp, $otp->otp_hash)) {
+        if (! Hash::check($request->otp, $otp->otp_hash)) {
+
             $otp->increment('attempts');
 
             return response()->json([
@@ -118,18 +125,68 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Activate user
-        $user->update([
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
+        DB::transaction(function () use ($user, $otp) {
 
-        // Delete OTP
-        $otp->delete();
+            $user->update([
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+
+            $otp->delete();
+        });
 
         return response()->json([
             'status' => 'success',
             'message' => 'Email verified successfully.',
+        ]);
+    }
+
+    public function resendOtp(ResendOtpRequest $request): JsonResponse
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        if ($user->status === 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email is already verified.',
+            ], 422);
+        }
+
+        $otp = DB::transaction(function () use ($user) {
+
+            // Delete previous OTPs
+            Otp::where('user_id', $user->id)
+                ->where('purpose', 'email_verification')
+                ->delete();
+
+            $newOtp = random_int(100000, 999999);
+
+            Otp::create([
+                'user_id' => $user->id,
+                'purpose' => 'email_verification',
+                'otp_hash' => Hash::make($newOtp),
+                'expires_at' => now()->addMinutes(10),
+                'attempts' => 0,
+            ]);
+
+            return $newOtp;
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'A new OTP has been sent successfully.',
+            'data' => [
+
+                // Development only
+                'otp' => $otp,
+            ],
         ]);
     }
 
@@ -140,23 +197,25 @@ class AuthController extends Controller
         if (! $user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid credentials.',
+                'message' => 'Invalid email or password.',
             ], 401);
         }
 
         if ($user->status !== 'active') {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Please verify your email first.',
+                'message' => 'Please verify your email before logging in.',
             ], 403);
         }
 
         if (! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid credentials.',
+                'message' => 'Invalid email or password.',
             ], 401);
         }
+
+        $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -177,9 +236,7 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        $requestUser = auth()->user();
-
-        $requestUser->currentAccessToken()->delete();
+        auth()->user()->currentAccessToken()->delete();
 
         return response()->json([
             'status' => 'success',
@@ -189,10 +246,21 @@ class AuthController extends Controller
 
     public function user(): JsonResponse
     {
+        $user = auth()->user();
+
         return response()->json([
             'status' => 'success',
+            'message' => 'Authenticated user retrieved successfully.',
             'data' => [
-                'user' => auth()->user(),
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'status' => $user->status,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ],
             ],
         ]);
     }
