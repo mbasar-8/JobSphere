@@ -9,5 +9,5 @@ export default function GuestRoute({ children }) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return children;
+  return children ?? null;
 }

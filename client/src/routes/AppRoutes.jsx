@@ -18,6 +18,7 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Guest Routes */}
@@ -61,6 +62,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

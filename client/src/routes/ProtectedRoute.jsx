@@ -9,5 +9,5 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return children ?? null;
 }
