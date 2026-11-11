@@ -1,68 +1,69 @@
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
 
 import { login } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import Input from "../../components/ui/Input";
+
 export default function Login() {
   const { login: loginUser } = useAuth();
+  const location = useLocation();
 
-  const [formData, setFormData] = useState({
+  const successMessage = location.state?.message || "";
+
+  const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({});
+
+  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
 
-    // Clear error while typing
     setErrors((prev) => ({
       ...prev,
-      [e.target.name]: "",
+      [name]: "",
     }));
+
+    setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const validationErrors = {};
-
-    if (!formData.email.trim()) {
-      validationErrors.email = "Email is required.";
-    }
-
-    if (!formData.password.trim()) {
-      validationErrors.password = "Password is required.";
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     setLoading(true);
+    setErrors({});
+    setError("");
 
     try {
-      const response = await login(formData);
+      const response = await login(form);
 
-      const { token, user } = response.data.data;
-
-      loginUser(token, user);
-
-      console.log("Login successful");
-      console.log(response.data);
+      loginUser(response.data.data.token, response.data.data.user);
     } catch (error) {
-      console.error(error.response?.data);
+      if (error.response?.status === 422) {
+        if (error.response.data.errors) {
+          setErrors(error.response.data.errors);
+        } else {
+          setError(error.response.data.message);
+        }
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -70,62 +71,65 @@ export default function Login() {
 
   return (
     <Card>
-      <div className="mb-8 text-center">
+      <div className="mb-6 text-center">
         <h1 className="text-3xl font-bold text-slate-900">Welcome Back</h1>
 
-        <p className="mt-2 text-sm text-slate-500">
-          Sign in to continue to JobSphere.
+        <p className="mt-2 text-sm text-slate-600">
+          Sign in to your JobSphere account.
         </p>
       </div>
 
+      {successMessage && (
+        <div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          {successMessage}
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
-          label="Email"
+          label="Email Address"
           type="email"
           name="email"
-          value={formData.email}
+          value={form.email}
           onChange={handleChange}
-          placeholder="Enter your email"
-          error={errors.email}
+          placeholder="Enter your email address"
+          error={errors.email?.[0]}
           required
+          disabled={loading}
         />
 
         <Input
           label="Password"
           type="password"
           name="password"
-          value={formData.password}
+          value={form.password}
           onChange={handleChange}
           placeholder="Enter your password"
-          error={errors.password}
+          error={errors.password?.[0]}
           required
+          disabled={loading}
         />
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
-          >
-            Forgot Password?
-          </button>
-        </div>
-
-        <Button type="submit" disabled={loading}>
-          {loading ? "Signing In..." : "Login"}
+        <Button type="submit" loading={loading}>
+          Sign In
         </Button>
       </form>
 
-      <div className="mt-6 border-t border-slate-200 pt-6 text-center">
-        <p className="text-sm text-slate-600">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="font-semibold text-blue-600 hover:text-blue-700"
-          >
-            Register
-          </Link>
-        </p>
-      </div>
+      <p className="mt-6 text-center text-sm text-slate-600">
+        Don't have an account?{" "}
+        <Link
+          to="/register"
+          className="font-medium text-blue-600 hover:text-blue-700"
+        >
+          Create Account
+        </Link>
+      </p>
     </Card>
   );
 }

@@ -1,16 +1,18 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import GuestRoute from "./GuestRoute";
 
 import AuthLayout from "../layouts/AuthLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+import GuestRoute from "./GuestRoute";
+import ProtectedRoute from "./ProtectedRoute";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import VerifyOtp from "../pages/auth/VerifyOtp";
 
 import Dashboard from "../pages/dashboard/Dashboard";
-import NotFound from "../pages/NotFound";
 
-import ProtectedRoute from "./ProtectedRoute";
+import NotFound from "../pages/NotFound";
 
 export default function AppRoutes() {
   return (
@@ -18,6 +20,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
 
+        {/* Guest Routes */}
         <Route element={<AuthLayout />}>
           <Route
             path="/login"
@@ -47,14 +50,16 @@ export default function AppRoutes() {
           />
         </Route>
 
+        {/* Protected Routes */}
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

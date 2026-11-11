@@ -26,7 +26,12 @@ export default function Input({
           className="block text-sm font-medium text-slate-700"
         >
           {label}
-          {required && <span className="ml-1 text-red-500">*</span>}
+
+          {required && (
+            <span className="ml-1 text-red-500" aria-hidden="true">
+              *
+            </span>
+          )}
         </label>
       )}
 
@@ -39,8 +44,11 @@ export default function Input({
           onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
+          autoComplete={isPassword ? "current-password" : undefined}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${name}-error` : undefined}
           className={`
-            w-full rounded-xl border px-4 py-3 outline-none transition
+            w-full rounded-xl border px-4 py-3 outline-none transition-colors duration-200
             ${isPassword ? "pr-12" : ""}
             ${
               error
@@ -55,14 +63,19 @@ export default function Input({
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+            className="absolute inset-y-0 right-3 flex items-center text-slate-500 transition-colors hover:text-slate-700"
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         )}
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && (
+        <p id={`${name}-error`} className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

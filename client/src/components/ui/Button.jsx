@@ -3,34 +3,25 @@ export default function Button({
   type = "button",
   onClick,
   disabled = false,
+  loading = false,
   className = "",
 }) {
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`
-        w-full
-        rounded-xl
-        bg-blue-600
-        px-4
-        py-3
-        text-sm
-        font-semibold
-        text-white
-        transition
+        flex w-full items-center justify-center rounded-xl
+        bg-blue-600 px-4 py-3 font-medium text-white
+        transition-colors duration-200
         hover:bg-blue-700
-        focus:outline-none
-        focus:ring-2
-        focus:ring-blue-500
-        focus:ring-offset-2
         disabled:cursor-not-allowed
-        disabled:opacity-50
+        disabled:opacity-60
         ${className}
       `}
     >
-      {children}
+      {loading ? "Please wait..." : children}
     </button>
   );
 }
