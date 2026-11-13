@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -37,7 +39,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -55,17 +57,17 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function otps()
+    public function otps(): HasMany
     {
         return $this->hasMany(Otp::class);
     }
 
-    public function candidateProfile()
+    public function candidateProfile(): HasOne
     {
         return $this->hasOne(CandidateProfile::class);
     }
 
-    public function recruiterProfile()
+    public function recruiterProfile(): HasOne
     {
         return $this->hasOne(RecruiterProfile::class);
     }
