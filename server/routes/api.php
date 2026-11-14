@@ -1,7 +1,16 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CompanyController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/companies/{slug}', [CompanyController::class, 'publicShow']);
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +34,25 @@ Route::prefix('auth')->group(function () {
 
         Route::get('/user', [AuthController::class, 'user']);
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Company Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/company', [CompanyController::class, 'store']);
+
+    Route::get('/company', [CompanyController::class, 'show']);
+
+    Route::put('/company', [CompanyController::class, 'update']);
 });
