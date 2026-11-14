@@ -271,6 +271,13 @@ class JobController extends Controller
             ], 403);
         }
 
+        if ($job->status !== 'published') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only published jobs can be closed.',
+            ], 422);
+        }
+
         if ($job->status === 'closed') {
             return response()->json([
                 'status' => 'error',
@@ -285,6 +292,64 @@ class JobController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Job closed successfully.',
+            'data' => new JobResource($job->fresh()),
+        ]);
+    }
+
+    /**
+     * Publish the specified job.
+     */
+    public function publish(Job $job): JsonResponse
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'recruiter') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only recruiters can publish jobs.',
+            ], 403);
+        }
+
+        $recruiterProfile = $user->recruiterProfile;
+
+        if (! $recruiterProfile) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Recruiter profile not found.',
+            ], 404);
+        }
+
+        $company = $recruiterProfile->company;
+
+        if (! $company) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Company not found.',
+            ], 404);
+        }
+
+        if ($job->company_id !== $company->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to publish this job.',
+            ], 403);
+        }
+
+        if ($job->status !== 'draft') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only draft jobs can be published.',
+            ], 422);
+        }
+
+        $job->update([
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Job published successfully.',
             'data' => new JobResource($job->fresh()),
         ]);
     }

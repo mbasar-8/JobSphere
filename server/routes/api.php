@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RecruiterProfileController;
 use App\Http\Controllers\Api\CandidateProfileController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,5 +97,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobs', [JobController::class, 'store']);
     Route::get('/jobs/{job}', [JobController::class, 'show']);
     Route::put('/jobs/{job}', [JobController::class, 'update']);
+    Route::patch('/jobs/{job}/publish', [JobController::class, 'publish']);
     Route::patch('/jobs/{job}/close', [JobController::class, 'close']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::get('/applications/{application}', [ApplicationController::class, 'show']);
+    Route::patch('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw']);
 });
