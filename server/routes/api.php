@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RecruiterProfileController;
+use App\Http\Controllers\Api\CandidateProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,4 +70,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/recruiter-profile', [RecruiterProfileController::class, 'show']);
 
     Route::put('/recruiter-profile', [RecruiterProfileController::class, 'update']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Candidate Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/candidate-profile', [CandidateProfileController::class, 'store']);
+
+    Route::get('/candidate-profile', [CandidateProfileController::class, 'show']);
+
+    Route::put('/candidate-profile', [CandidateProfileController::class, 'update']);
 });
