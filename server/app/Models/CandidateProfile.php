@@ -62,4 +62,9 @@ class CandidateProfile extends Model
     {
         return $this->hasMany(Application::class, 'candidate_id');
     }
+
+    public function savedJobs(): HasMany
+    {
+        return $this->hasMany(SavedJob::class, 'candidate_id');
+    }
 }
