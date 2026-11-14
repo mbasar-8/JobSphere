@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CandidateProfileController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\SavedJobController;
+use App\Http\Controllers\Api\RecruiterApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -123,4 +124,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/saved-jobs', [SavedJobController::class, 'index']);
     Route::delete('/saved-jobs/{job}', [SavedJobController::class, 'destroy']);
     Route::get('/saved-jobs/check/{job}', [SavedJobController::class, 'check']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recruiter Application Manage Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/recruiter/applications', [RecruiterApplicationController::class, 'index']);
+
+    Route::get('/recruiter/applications/{application}', [RecruiterApplicationController::class, 'show']);
+
+    Route::patch('/recruiter/applications/{application}/status', [RecruiterApplicationController::class, 'updateStatus']);
 });
