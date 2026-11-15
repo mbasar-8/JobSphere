@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Mail;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -42,6 +45,8 @@ class AuthController extends Controller
                 'attempts' => 0,
             ]);
 
+            Mail::to($user->email)->send(new OtpMail((string) $otp));
+
             return [
                 'user' => $user,
                 'otp' => $otp,
@@ -58,9 +63,6 @@ class AuthController extends Controller
                     'role' => $result['user']->role,
                     'status' => $result['user']->status,
                 ],
-
-                // Development only
-                'otp' => $result['otp'],
             ],
         ], 201);
     }
@@ -176,17 +178,14 @@ class AuthController extends Controller
                 'attempts' => 0,
             ]);
 
+            Mail::to($user->email)->send(new OtpMail((string) $newOtp));
+
             return $newOtp;
         });
 
         return response()->json([
             'status' => 'success',
             'message' => 'A new OTP has been sent successfully.',
-            'data' => [
-
-                // Development only
-                'otp' => $otp,
-            ],
         ]);
     }
 
