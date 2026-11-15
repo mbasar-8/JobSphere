@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
@@ -9,6 +10,10 @@ import Card from "../../components/ui/Card";
 import Input from "../../components/ui/Input";
 
 export default function Login() {
+  useEffect(() => {
+    document.title = "JobSphere | Login";
+  }, []);
+
   const { login: loginUser } = useAuth();
   const location = useLocation();
 

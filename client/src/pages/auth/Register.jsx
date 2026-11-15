@@ -18,6 +18,7 @@ export default function Register() {
   });
 
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
@@ -32,6 +33,8 @@ export default function Register() {
       ...prev,
       [name]: "",
     }));
+
+    setError("");
   };
 
   const handleSubmit = async (event) => {
@@ -39,6 +42,7 @@ export default function Register() {
 
     setLoading(true);
     setErrors({});
+    setError("");
 
     try {
       const response = await register(form);
@@ -46,13 +50,14 @@ export default function Register() {
       navigate("/verify-otp", {
         state: {
           email: response.data.data.user.email,
+          message: "We've sent a verification code to your email address.",
         },
       });
     } catch (error) {
       if (error.response?.status === 422) {
         setErrors(error.response.data.errors || {});
       } else {
-        alert(
+        setError(
           error.response?.data?.message ||
             "Something went wrong. Please try again.",
         );
@@ -71,6 +76,12 @@ export default function Register() {
           Create your JobSphere account to get started.
         </p>
       </div>
+
+      {error && (
+        <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input

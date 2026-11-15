@@ -12,9 +12,11 @@ export default function VerifyOtp() {
   const location = useLocation();
 
   const email = location.state?.email || "";
+  const successMessage = location.state?.message || "";
 
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -28,6 +30,7 @@ export default function VerifyOtp() {
     event.preventDefault();
 
     setError("");
+    setSuccess("");
 
     if (otp.length !== 6) {
       setError("Please enter the 6-digit OTP.");
@@ -63,6 +66,7 @@ export default function VerifyOtp() {
 
   const handleResend = async () => {
     setError("");
+    setSuccess("");
     setResending(true);
 
     try {
@@ -70,7 +74,7 @@ export default function VerifyOtp() {
         email,
       });
 
-      alert("A new OTP has been sent successfully.");
+      setSuccess("A new verification code has been sent to your email.");
     } catch (error) {
       if (error.response?.data?.message) {
         setError(error.response.data.message);
@@ -93,6 +97,18 @@ export default function VerifyOtp() {
 
         <p className="mt-1 font-medium text-slate-900">{email}</p>
       </div>
+
+      {successMessage && (
+        <div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          {successMessage}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          {success}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <OtpInput value={otp} onChange={setOtp} disabled={loading} />
