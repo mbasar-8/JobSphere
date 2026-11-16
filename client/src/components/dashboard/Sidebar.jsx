@@ -1,20 +1,78 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  BriefcaseBusiness,
+  Building2,
+  FileText,
+  Bookmark,
+  LogOut,
+} from "lucide-react";
 
 import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar() {
   const location = useLocation();
 
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
-  const menuItems = [
+  const candidateMenu = [
     {
       label: "Dashboard",
       path: "/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      label: "My Profile",
+      path: "/profile",
+      icon: User,
+    },
+    {
+      label: "Browse Jobs",
+      path: "/jobs",
+      icon: BriefcaseBusiness,
+    },
+    {
+      label: "My Applications",
+      path: "/applications",
+      icon: FileText,
+    },
+    {
+      label: "Saved Jobs",
+      path: "/saved-jobs",
+      icon: Bookmark,
+    },
   ];
+
+  const recruiterMenu = [
+    {
+      label: "Dashboard",
+      path: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "My Profile",
+      path: "/profile",
+      icon: User,
+    },
+    {
+      label: "Company",
+      path: "/company",
+      icon: Building2,
+    },
+    {
+      label: "Jobs",
+      path: "/jobs",
+      icon: BriefcaseBusiness,
+    },
+    {
+      label: "Applications",
+      path: "/applications",
+      icon: FileText,
+    },
+  ];
+
+  const menuItems = user?.role === "recruiter" ? recruiterMenu : candidateMenu;
 
   const navigate = useNavigate();
 

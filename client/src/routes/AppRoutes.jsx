@@ -14,6 +14,8 @@ import Dashboard from "../pages/dashboard/Dashboard";
 
 import NotFound from "../pages/NotFound";
 
+import Profile from "../pages/profile/Profile";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -60,6 +62,7 @@ export default function AppRoutes() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* 404 */}
