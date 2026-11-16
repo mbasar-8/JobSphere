@@ -35,6 +35,8 @@ export default function Profile() {
     github_url: "",
     portfolio_url: "",
     designation: "",
+    city_id: "",
+    profile_photo: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -69,6 +71,8 @@ export default function Profile() {
         github_url: response.data.data.github_url || "",
         portfolio_url: response.data.data.portfolio_url || "",
         designation: response.data.data.designation || "",
+        city_id: response.data.data.city_id || "",
+        profile_photo: response.data.data.profile_photo || "",
       });
       setMode("edit");
     } catch (error) {
@@ -205,6 +209,64 @@ export default function Profile() {
               className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
             />
           </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Gender
+            </label>
+
+            <select
+              name="gender"
+              value={form.gender}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+
+            {errors.gender && (
+              <p className="mt-1 text-sm text-red-600">{errors.gender[0]}</p>
+            )}
+          </div>
+
+          <Input
+            label="Date of Birth"
+            type="date"
+            name="date_of_birth"
+            value={form.date_of_birth}
+            onChange={handleChange}
+            error={errors.date_of_birth?.[0]}
+          />
+
+          <Input
+            label="LinkedIn URL"
+            type="url"
+            name="linkedin_url"
+            value={form.linkedin_url}
+            onChange={handleChange}
+            error={errors.linkedin_url?.[0]}
+          />
+
+          <Input
+            label="GitHub URL"
+            type="url"
+            name="github_url"
+            value={form.github_url}
+            onChange={handleChange}
+            error={errors.github_url?.[0]}
+          />
+
+          <Input
+            label="Portfolio URL"
+            type="url"
+            name="portfolio_url"
+            value={form.portfolio_url}
+            onChange={handleChange}
+            error={errors.portfolio_url?.[0]}
+          />
 
           <Button type="submit" loading={submitting}>
             {mode === "create" ? "Create Profile" : "Update Profile"}
