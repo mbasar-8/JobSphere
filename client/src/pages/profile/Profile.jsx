@@ -7,6 +7,8 @@ import {
   getCandidateProfile,
   getRecruiterProfile,
   updateCandidateProfile,
+  createRecruiterProfile,
+  updateRecruiterProfile,
 } from "../../api/profile";
 
 import Card from "../../components/ui/Card";
@@ -32,6 +34,7 @@ export default function Profile() {
     linkedin_url: "",
     github_url: "",
     portfolio_url: "",
+    designation: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -65,6 +68,7 @@ export default function Profile() {
         linkedin_url: response.data.data.linkedin_url || "",
         github_url: response.data.data.github_url || "",
         portfolio_url: response.data.data.portfolio_url || "",
+        designation: response.data.data.designation || "",
       });
       setMode("edit");
     } catch (error) {
@@ -99,10 +103,18 @@ export default function Profile() {
     setErrors({});
 
     try {
-      if (mode === "create") {
-        await createCandidateProfile(form, token);
+      if (user.role === "candidate") {
+        if (mode === "create") {
+          await createCandidateProfile(form, token);
+        } else {
+          await updateCandidateProfile(form, token);
+        }
       } else {
-        await updateCandidateProfile(form, token);
+        if (mode === "create") {
+          await createRecruiterProfile(form, token);
+        } else {
+          await updateRecruiterProfile(form, token);
+        }
       }
 
       await loadProfile();
@@ -199,7 +211,38 @@ export default function Profile() {
           </Button>
         </form>
       ) : (
-        <div>Recruiter form coming next...</div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            label="Full Name"
+            type="text"
+            name="full_name"
+            value={form.full_name}
+            onChange={handleChange}
+            error={errors.full_name?.[0]}
+          />
+
+          <Input
+            label="Phone"
+            type="text"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            error={errors.phone?.[0]}
+          />
+
+          <Input
+            label="Designation"
+            type="text"
+            name="designation"
+            value={form.designation || ""}
+            onChange={handleChange}
+            error={errors.designation?.[0]}
+          />
+
+          <Button type="submit" loading={submitting}>
+            {mode === "create" ? "Create Profile" : "Update Profile"}
+          </Button>
+        </form>
       )}
     </Card>
   );

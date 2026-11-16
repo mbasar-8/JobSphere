@@ -1,14 +1,5 @@
 import api from "./axios";
 
-import {
-  createCandidateProfile,
-  getCandidateProfile,
-  getRecruiterProfile,
-  updateCandidateProfile,
-  createRecruiterProfile,
-  updateRecruiterProfile,
-} from "../../api/profile";
-
 // Candidate Profile
 export const createCandidateProfile = (data, token) =>
   api.post("/candidate-profile", data, {
