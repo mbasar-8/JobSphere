@@ -18,6 +18,10 @@ import Profile from "../pages/profile/Profile";
 
 import Company from "../pages/company/Company";
 
+import Jobs from "../pages/jobs/Jobs";
+import CreateJob from "../pages/jobs/CreateJob";
+import EditJob from "../pages/jobs/EditJob";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -66,6 +70,12 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/company" element={<Company />} />
+
+          <Route path="/jobs" element={<Jobs />} />
+
+          <Route path="/jobs/create" element={<CreateJob />} />
+
+          <Route path="/jobs/:id/edit" element={<EditJob />} />
         </Route>
 
         {/* 404 */}
