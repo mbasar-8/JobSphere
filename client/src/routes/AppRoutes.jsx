@@ -16,6 +16,8 @@ import NotFound from "../pages/NotFound";
 
 import Profile from "../pages/profile/Profile";
 
+import Company from "../pages/company/Company";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -63,6 +65,7 @@ export default function AppRoutes() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/company" element={<Company />} />
         </Route>
 
         {/* 404 */}

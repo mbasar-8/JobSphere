@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\SavedJobController;
 use App\Http\Controllers\Api\RecruiterApplicationController;
+use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\IndustryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,4 +139,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/recruiter/applications/{application}', [RecruiterApplicationController::class, 'show']);
 
     Route::patch('/recruiter/applications/{application}/status', [RecruiterApplicationController::class, 'updateStatus']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Industry Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/industries', [IndustryController::class, 'index']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | City Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cities', [CityController::class, 'index']);
 });
