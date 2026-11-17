@@ -1,3 +1,5 @@
+import JobForm from "../../components/jobs/JobForm";
+
 export default function CreateJob() {
-  return <h1>Create Job</h1>;
+  return <JobForm mode="create" />;
 }

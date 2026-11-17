@@ -1,3 +1,5 @@
+import JobForm from "../../components/jobs/JobForm";
+
 export default function EditJob() {
-  return <h1>Edit Job</h1>;
+  return <JobForm mode="edit" />;
 }
