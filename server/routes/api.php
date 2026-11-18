@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SavedJobController;
 use App\Http\Controllers\Api\RecruiterApplicationController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\IndustryController;
+use App\Http\Controllers\Api\PublicJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ use App\Http\Controllers\Api\IndustryController;
 */
 
 Route::get('/companies/{slug}', [CompanyController::class, 'publicShow']);
+Route::get('/public/jobs', [PublicJobController::class, 'index']);
+Route::get('/public/jobs/{slug}', [PublicJobController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
