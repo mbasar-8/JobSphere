@@ -33,14 +33,14 @@ export default function Sidebar() {
       icon: BriefcaseBusiness,
     },
     {
-      label: "My Applications",
-      path: "/applications",
-      icon: FileText,
-    },
-    {
       label: "Saved Jobs",
       path: "/saved-jobs",
       icon: Bookmark,
+    },
+    {
+      label: "My Applications",
+      path: "/applications",
+      icon: FileText,
     },
   ];
 

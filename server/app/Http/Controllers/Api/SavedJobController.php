@@ -86,6 +86,10 @@ class SavedJobController extends Controller
         }
 
         $savedJobs = $candidateProfile->savedJobs()
+            ->with([
+                'job.company',
+                'job.city',
+            ])
             ->latest()
             ->get();
 

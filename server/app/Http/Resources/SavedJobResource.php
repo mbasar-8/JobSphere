@@ -15,15 +15,33 @@ class SavedJobResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this->job->id,
 
-            'candidate_id' => $this->candidate_id,
+            'title' => $this->job->title,
 
-            'job_id' => $this->job_id,
+            'slug' => $this->job->slug,
 
-            'created_at' => $this->created_at,
+            'employment_type' => $this->job->employment_type,
 
-            'updated_at' => $this->updated_at,
+            'workplace_type' => $this->job->workplace_type,
+
+            'experience_level' => $this->job->experience_level,
+
+            'company' => [
+                'id' => $this->job->company->id,
+                'company_name' => $this->job->company->company_name,
+                'slug' => $this->job->company->slug,
+                'logo' => $this->job->company->logo,
+            ],
+
+            'city' => $this->job->city
+                ? [
+                    'id' => $this->job->city->id,
+                    'name' => $this->job->city->name,
+                ]
+                : null,
+
+            'saved_at' => $this->created_at,
         ];
     }
 }

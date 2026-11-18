@@ -2,16 +2,28 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { getPublicJob } from "../../api/publicJob";
+import { checkSavedJob, saveJob, removeSavedJob } from "../../api/savedJob";
+import { useAuth } from "../../context/AuthContext";
 
 export default function PublicJobDetails() {
   const { slug } = useParams();
+  const { token, user } = useAuth();
 
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
     loadJob();
   }, [slug]);
+
+  useEffect(() => {
+    if (job) {
+      loadSavedStatus();
+    }
+  }, [job]);
 
   const loadJob = async () => {
     setLoading(true);
@@ -24,6 +36,58 @@ export default function PublicJobDetails() {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadSavedStatus = async () => {
+    if (!token) return;
+
+    if (user?.role !== "candidate") return;
+
+    try {
+      const response = await checkSavedJob(job.id, token);
+
+      setSaved(response.data.data.saved);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSaveJob = async () => {
+    if (!token) {
+      alert("Please login first.");
+      return;
+    }
+
+    if (user?.role !== "candidate") {
+      alert("Only candidates can save jobs.");
+      return;
+    }
+
+    if (saving) return;
+
+    setSaving(true);
+
+    try {
+      if (saved) {
+        await removeSavedJob(job.id, token);
+
+        setSaved(false);
+
+        alert("Job removed from saved jobs.");
+      } else {
+        await saveJob(job.id, token);
+
+        setSaved(true);
+
+        alert("Job saved successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+
+      alert(error?.response?.data?.message ?? "Something went wrong.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -89,35 +153,7 @@ export default function PublicJobDetails() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div>
-            <p className="text-sm text-slate-500">Salary</p>
-
-            <p className="font-medium">
-              {job.salary_min} - {job.salary_max}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-slate-500">Deadline</p>
-
-            <p className="font-medium">{job.application_deadline}</p>
-          </div>
-
-          <div>
-            <p className="text-sm text-slate-500">Published</p>
-
-            <p className="font-medium">{job.published_at}</p>
-          </div>
-
-          <div>
-            <p className="text-sm text-slate-500">Company</p>
-
-            <p className="font-medium">{job.company?.company_name}</p>
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-4 border-t pt-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 border-t pt-6 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-sm text-slate-500">Salary</p>
 
@@ -137,16 +173,32 @@ export default function PublicJobDetails() {
 
             <p className="font-semibold">{job.application_deadline}</p>
           </div>
+
+          <div>
+            <p className="text-sm text-slate-500">Published</p>
+
+            <p className="font-semibold">{job.published_at}</p>
+          </div>
         </div>
 
         <div className="mt-10 flex flex-wrap gap-4">
-          <button className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700">
+          <button
+            type="button"
+            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+          >
             Apply Now
           </button>
 
-          <button className="rounded-lg border border-slate-300 px-6 py-3 font-medium transition hover:bg-slate-100">
-            Save Job
-          </button>
+          {user?.role === "candidate" && (
+            <button
+              type="button"
+              onClick={handleSaveJob}
+              disabled={saving}
+              className="rounded-lg border border-slate-300 px-6 py-3 font-medium transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? "Please wait..." : saved ? "Saved ✓" : "Save Job"}
+            </button>
+          )}
         </div>
       </div>
     </div>
