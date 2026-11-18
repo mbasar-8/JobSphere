@@ -116,6 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/applications', [ApplicationController::class, 'index']);
     Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::get('/applications/check/{job}', [ApplicationController::class, 'check']);
     Route::get('/applications/{application}', [ApplicationController::class, 'show']);
     Route::patch('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw']);
 

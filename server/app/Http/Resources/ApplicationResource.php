@@ -17,21 +17,36 @@ class ApplicationResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'job_id' => $this->job_id,
-
-            'candidate_id' => $this->candidate_id,
+            'status' => $this->status,
 
             'cover_letter' => $this->cover_letter,
 
             'resume' => $this->resume,
 
-            'status' => $this->status,
-
             'applied_at' => $this->applied_at,
 
-            'created_at' => $this->created_at,
+            'job' => [
+                'id' => $this->job->id,
+                'title' => $this->job->title,
+                'slug' => $this->job->slug,
+                'employment_type' => $this->job->employment_type,
+                'workplace_type' => $this->job->workplace_type,
+                'experience_level' => $this->job->experience_level,
 
-            'updated_at' => $this->updated_at,
+                'company' => [
+                    'id' => $this->job->company->id,
+                    'company_name' => $this->job->company->company_name,
+                    'slug' => $this->job->company->slug,
+                    'logo' => $this->job->company->logo,
+                ],
+
+                'city' => $this->job->city
+                    ? [
+                        'id' => $this->job->city->id,
+                        'name' => $this->job->city->name,
+                    ]
+                    : null,
+            ],
         ];
     }
 }

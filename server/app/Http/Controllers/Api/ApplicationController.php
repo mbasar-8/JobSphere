@@ -73,7 +73,12 @@ class ApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Application submitted successfully.',
-            'data' => new ApplicationResource($application),
+            'data' => new ApplicationResource(
+                $application->load([
+                    'job.company',
+                    'job.city',
+                ])
+            ),
         ], 201);
     }
 
@@ -104,6 +109,10 @@ class ApplicationController extends Controller
         }
 
         $applications = $candidateProfile->applications()
+            ->with([
+                'job.company',
+                'job.city',
+            ])
             ->latest()
             ->get();
 
@@ -147,7 +156,12 @@ class ApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Application retrieved successfully.',
-            'data' => new ApplicationResource($application),
+            'data' => new ApplicationResource(
+                $application->load([
+                    'job.company',
+                    'job.city',
+                ])
+            ),
         ]);
     }
 
@@ -195,7 +209,47 @@ class ApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Application withdrawn successfully.',
-            'data' => new ApplicationResource($application->fresh()),
+            'data' => new ApplicationResource(
+                $application->fresh()->load([
+                    'job.company',
+                    'job.city',
+                ])
+            ),
+        ]);
+    }
+
+    /**
+     * Check if the authenticated candidate has already applied for a job.
+     */
+    public function check(Job $job): JsonResponse
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'candidate') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only candidates can check application status.',
+            ], 403);
+        }
+
+        $candidateProfile = $user->candidateProfile;
+
+        if (! $candidateProfile) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Candidate profile not found.',
+            ], 404);
+        }
+
+        $applied = Application::where('candidate_id', $candidateProfile->id)
+            ->where('job_id', $job->id)
+            ->exists();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'applied' => $applied,
+            ],
         ]);
     }
 }

@@ -23,6 +23,9 @@ import CreateJob from "../pages/jobs/CreateJob";
 import EditJob from "../pages/jobs/EditJob";
 import PublicJobDetails from "../pages/jobs/PublicJobDetails";
 import SavedJobs from "../pages/jobs/SavedJobs";
+import ApplicationCreate from "../pages/applications/ApplicationCreate";
+import Applications from "../pages/applications/Applications";
+import ApplicationDetails from "../pages/applications/ApplicationDetails";
 
 export default function AppRoutes() {
   return (
@@ -80,6 +83,15 @@ export default function AppRoutes() {
           <Route path="/jobs/:id/edit" element={<EditJob />} />
 
           <Route path="/saved-jobs" element={<SavedJobs />} />
+
+          <Route path="/applications" element={<Applications />} />
+
+          <Route
+            path="/applications/create/:slug"
+            element={<ApplicationCreate />}
+          />
+
+          <Route path="/applications/:id" element={<ApplicationDetails />} />
         </Route>
 
         <Route path="/jobs/:slug" element={<PublicJobDetails />} />

@@ -182,12 +182,12 @@ export default function PublicJobDetails() {
         </div>
 
         <div className="mt-10 flex flex-wrap gap-4">
-          <button
-            type="button"
+          <Link
+            to={`/applications/create/${job.slug}`}
             className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
           >
             Apply Now
-          </button>
+          </Link>
 
           {user?.role === "candidate" && (
             <button
