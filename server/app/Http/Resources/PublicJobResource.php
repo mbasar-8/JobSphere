@@ -50,6 +50,11 @@ class PublicJobResource extends JsonResource
             'salary_currency' => $this->salary_currency,
 
             'vacancies' => $this->vacancies,
+            'description' => $this->description,
+
+            'requirements' => $this->requirements,
+
+            'salary_type' => $this->salary_type,
 
             'application_deadline' => $this->application_deadline,
 

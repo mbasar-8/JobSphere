@@ -18,9 +18,10 @@ import Profile from "../pages/profile/Profile";
 
 import Company from "../pages/company/Company";
 
-import Jobs from "../pages/jobs/Jobs";
+import JobsRouter from "../pages/jobs/JobsRouter";
 import CreateJob from "../pages/jobs/CreateJob";
 import EditJob from "../pages/jobs/EditJob";
+import PublicJobDetails from "../pages/jobs/PublicJobDetails";
 
 export default function AppRoutes() {
   return (
@@ -71,12 +72,14 @@ export default function AppRoutes() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/company" element={<Company />} />
 
-          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs" element={<JobsRouter />} />
 
           <Route path="/jobs/create" element={<CreateJob />} />
 
           <Route path="/jobs/:id/edit" element={<EditJob />} />
         </Route>
+
+        <Route path="/jobs/:slug" element={<PublicJobDetails />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
