@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\RecruiterApplicationController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\IndustryController;
 use App\Http\Controllers\Api\PublicJobController;
+use App\Http\Controllers\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -160,4 +161,12 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::get('/cities', [CityController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 });
