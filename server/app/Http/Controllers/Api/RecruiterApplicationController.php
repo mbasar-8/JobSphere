@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Application\UpdateApplicationStatusRequest;
-use App\Http\Resources\ApplicationResource;
+use use App\Http\Resources\RecruiterApplicationResource;
 use App\Models\Application;
 use Illuminate\Http\JsonResponse;
 
@@ -43,9 +43,10 @@ class RecruiterApplicationController extends Controller
         }
 
         $applications = Application::with([
-            'candidate',
-            'job',
-        ])
+    'candidate.city',
+    'job.company',
+    'job.city',
+])
             ->whereHas('job', function ($query) use ($company) {
                 $query->where('company_id', $company->id);
             })
@@ -55,7 +56,7 @@ class RecruiterApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Applications retrieved successfully.',
-            'data' => ApplicationResource::collection($applications),
+            'data' => RecruiterApplicationResource::collection($applications),
         ]);
     }
 
@@ -101,7 +102,7 @@ class RecruiterApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Application retrieved successfully.',
-            'data' => new ApplicationResource($application),
+            'data' => new RecruiterApplicationResource($application),
         ]);
     }
 
@@ -160,7 +161,7 @@ class RecruiterApplicationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Application status updated successfully.',
-            'data' => new ApplicationResource($application->fresh()),
+            'data' => new RecruiterApplicationResource($application->fresh()),
         ]);
     }
 }

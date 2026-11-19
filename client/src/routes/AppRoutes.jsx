@@ -26,6 +26,8 @@ import SavedJobs from "../pages/jobs/SavedJobs";
 import ApplicationCreate from "../pages/applications/ApplicationCreate";
 import Applications from "../pages/applications/Applications";
 import ApplicationDetails from "../pages/applications/ApplicationDetails";
+import RecruiterApplications from "../pages/applications/RecruiterApplications";
+import RecruiterApplicationDetails from "../pages/applications/RecruiterApplicationDetails";
 
 export default function AppRoutes() {
   return (
@@ -92,6 +94,16 @@ export default function AppRoutes() {
           />
 
           <Route path="/applications/:id" element={<ApplicationDetails />} />
+
+          <Route
+            path="/recruiter/applications"
+            element={<RecruiterApplications />}
+          />
+
+          <Route
+            path="/recruiter/applications/:id"
+            element={<RecruiterApplicationDetails />}
+          />
         </Route>
 
         <Route path="/jobs/:slug" element={<PublicJobDetails />} />

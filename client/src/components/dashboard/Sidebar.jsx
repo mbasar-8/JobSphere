@@ -67,7 +67,7 @@ export default function Sidebar() {
     },
     {
       label: "Applications",
-      path: "/applications",
+      path: "/recruiter/applications",
       icon: FileText,
     },
   ];
@@ -96,7 +96,7 @@ export default function Sidebar() {
           {menuItems.map((item) => {
             const Icon = item.icon;
 
-            const active = location.pathname === item.path;
+            const active = location.pathname.startsWith(item.path);
 
             return (
               <li key={item.path}>

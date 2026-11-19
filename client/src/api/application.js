@@ -38,3 +38,30 @@ export const checkApplication = (jobId, token) =>
       Authorization: `Bearer ${token}`,
     },
   });
+
+export const getRecruiterApplications = (token) =>
+  api.get("/recruiter/applications", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const getRecruiterApplication = (id, token) =>
+  api.get(`/recruiter/applications/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const updateRecruiterApplicationStatus = (id, status, token) =>
+  api.patch(
+    `/recruiter/applications/${id}/status`,
+    {
+      status,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
