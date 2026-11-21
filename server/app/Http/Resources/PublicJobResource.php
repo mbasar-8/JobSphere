@@ -54,8 +54,6 @@ class PublicJobResource extends JsonResource
 
             'requirements' => $this->requirements,
 
-            'salary_type' => $this->salary_type,
-
             'application_deadline' => $this->application_deadline,
 
             'published_at' => $this->published_at,

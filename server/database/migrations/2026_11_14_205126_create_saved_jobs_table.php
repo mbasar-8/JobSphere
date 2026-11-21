@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreignId('candidate_id')
                 ->constrained('candidate_profiles')
                 ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
             $table->foreignId('job_id')
                 ->constrained()
                 ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
             $table->timestamps();
 

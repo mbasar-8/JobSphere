@@ -25,10 +25,12 @@ class CompanyResource extends JsonResource
             'description' => $this->description,
             'company_size' => $this->company_size,
 
-            'industry' => [
-                'id' => $this->industry?->id,
-                'name' => $this->industry?->name,
-            ],
+            'industry' => $this->industry
+                ? [
+                    'id' => $this->industry->id,
+                    'name' => $this->industry->name,
+                ]
+                : null,
 
             'city' => $this->city
                 ? [

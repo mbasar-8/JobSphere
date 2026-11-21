@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicJobResource;
 use App\Models\Job;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PublicJobController extends Controller
 {
-    /**
-     * Display a listing of published jobs.
-     */
     /**
      * Display a listing of published jobs.
      */

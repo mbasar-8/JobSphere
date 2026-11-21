@@ -278,13 +278,6 @@ class JobController extends Controller
             ], 422);
         }
 
-        if ($job->status === 'closed') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Job is already closed.',
-            ], 422);
-        }
-
         $job->update([
             'status' => 'closed',
         ]);

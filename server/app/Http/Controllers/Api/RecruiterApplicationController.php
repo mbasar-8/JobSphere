@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Application\UpdateApplicationStatusRequest;
-use use App\Http\Resources\RecruiterApplicationResource;
+use App\Http\Resources\RecruiterApplicationResource;
 use App\Models\Application;
 use Illuminate\Http\JsonResponse;
 
@@ -43,10 +43,10 @@ class RecruiterApplicationController extends Controller
         }
 
         $applications = Application::with([
-    'candidate.city',
-    'job.company',
-    'job.city',
-])
+            'candidate.city',
+            'job.company',
+            'job.city',
+        ])
             ->whereHas('job', function ($query) use ($company) {
                 $query->where('company_id', $company->id);
             })
@@ -147,7 +147,11 @@ class RecruiterApplicationController extends Controller
             ], 403);
         }
 
-        if (in_array($application->status, ['hired', 'rejected', 'withdrawn'])) {
+        if (in_array($application->status, [
+            'accepted',
+            'rejected',
+            'withdrawn'
+        ])) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'This application can no longer be updated.',

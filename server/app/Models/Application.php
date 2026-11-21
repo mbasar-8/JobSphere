@@ -39,4 +39,11 @@ class Application extends Model
     {
         return $this->belongsTo(CandidateProfile::class, 'candidate_id');
     }
+
+    protected function casts(): array
+    {
+        return [
+            'applied_at' => 'datetime',
+        ];
+    }
 }
