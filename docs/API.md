@@ -1,201 +1,182 @@
-# JobSphere API Documentation
+# JobSphere REST API Documentation
 
-Version: 1.0 (V1)
+## Overview
 
----
+JobSphere provides a RESTful API built with Laravel. The API is consumed by the React frontend and uses JSON for all requests and responses.
 
-# 1. API Overview
-
-## Purpose
-
-This document defines the REST API used by the JobSphere frontend and backend.
-
-The frontend is built with React, while the backend is built with Laravel. All communication between the client and server is performed through JSON-based REST APIs.
-
-This document focuses only on the APIs required for JobSphere Version 1 (V1). Additional endpoints may be introduced in future versions.
-
----
-
-## Technology Stack
-
-Frontend
-
-- React
-- Axios
-- React Router
-
-Backend
-
-- Laravel
-- PostgreSQL
-- Laravel Sanctum
+Protected endpoints require authentication using **Laravel Sanctum**.
 
 ---
 
 ## Base URL
 
-Development
+### Local Development
 
-```
-http://localhost:8000/api
-```
-
-Production
-
-```
-https://your-domain.com/api
+```text
+http://127.0.0.1:8000/api
 ```
 
-The production URL will be updated after deployment.
+### Production
 
----
-
-## API Principles
-
-JobSphere APIs follow these principles:
-
-- RESTful endpoint design
-- JSON request and response bodies
-- Stateless communication
-- Token-based authentication using Laravel Sanctum
-- Proper HTTP status codes
-- Consistent response structure
-- Secure input validation
-- Principle of least privilege
-
----
-
-# 2. API Standards
-
-## Request Format
-
-Requests must use JSON unless uploading files.
-
-Example
-
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
+```text
+https://jobsphere-production-8d895004.up.railway.app/api
 ```
-
----
-
-## Success Response
-
-```json
-{
-  "success": true,
-  "message": "Operation completed successfully.",
-  "data": {}
-}
-```
-
----
-
-## Error Response
-
-```json
-{
-  "success": false,
-  "message": "Validation failed.",
-  "errors": {}
-}
-```
-
----
-
-## HTTP Status Codes
-
-| Code | Meaning               |
-| ---- | --------------------- |
-| 200  | OK                    |
-| 201  | Created               |
-| 204  | No Content            |
-| 400  | Bad Request           |
-| 401  | Unauthorized          |
-| 403  | Forbidden             |
-| 404  | Not Found             |
-| 409  | Conflict              |
-| 422  | Validation Error      |
-| 429  | Too Many Requests     |
-| 500  | Internal Server Error |
 
 ---
 
 ## Authentication
 
-Protected endpoints require an authenticated user.
+Protected endpoints require the following HTTP header:
 
-Authentication will use Laravel Sanctum.
-
-Clients must send the access token with every protected request.
-
-```
-Authorization: Bearer {access_token}
+```http
+Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
 ---
 
-## Content Type
+# Public Routes
 
-```
-Content-Type: application/json
-Accept: application/json
-```
-
-File upload endpoints will use:
-
-```
-multipart/form-data
-```
+| Method | Endpoint              | Description                   |
+| :----- | :-------------------- | :---------------------------- |
+| GET    | `/companies/{slug}`   | View a public company profile |
+| GET    | `/public/jobs`        | Browse published jobs         |
+| GET    | `/public/jobs/{slug}` | View published job details    |
 
 ---
 
-## API Versioning
+# Authentication Routes
 
-The initial release targets Version 1 (V1).
-
-Future breaking changes should be introduced through a new API version while maintaining backward compatibility where practical.
-
----
-
-## Date & Time
-
-All timestamps are stored in UTC by the backend.
-
-Responses use ISO 8601 date-time format.
-
-Example
-
-```
-2026-11-07T08:30:00Z
-```
+| Method | Endpoint           | Authentication |
+| :----- | :----------------- | :------------- |
+| POST   | `/auth/register`   | No             |
+| POST   | `/auth/verify-otp` | No             |
+| POST   | `/auth/resend-otp` | No             |
+| POST   | `/auth/login`      | No             |
+| POST   | `/auth/logout`     | Yes            |
+| GET    | `/auth/user`       | Yes            |
 
 ---
 
-## Pagination
+# Company Routes
 
-Collection endpoints should return paginated results.
-
-Default page size:
-
-```
-20
-```
-
-Clients may request a different page size within allowed limits.
+| Method | Endpoint   |
+| :----- | :--------- |
+| POST   | `/company` |
+| GET    | `/company` |
+| PUT    | `/company` |
 
 ---
 
-## General Development Rules
+# Recruiter Profile Routes
 
-- Validate every request.
-- Never trust client input.
-- Return meaningful error messages.
-- Keep response structures consistent.
-- Protect all sensitive endpoints with authentication and authorization.
-- Keep business logic in the backend.
-- Avoid breaking API contracts within V1.
-- Document new endpoints as they are implemented.
+| Method | Endpoint             |
+| :----- | :------------------- |
+| POST   | `/recruiter-profile` |
+| GET    | `/recruiter-profile` |
+| PUT    | `/recruiter-profile` |
+
+---
+
+# Candidate Profile Routes
+
+| Method | Endpoint             |
+| :----- | :------------------- |
+| POST   | `/candidate-profile` |
+| GET    | `/candidate-profile` |
+| PUT    | `/candidate-profile` |
+
+---
+
+# Job Routes
+
+| Method | Endpoint              |
+| :----- | :-------------------- |
+| GET    | `/jobs`               |
+| POST   | `/jobs`               |
+| GET    | `/jobs/{job}`         |
+| PUT    | `/jobs/{job}`         |
+| PATCH  | `/jobs/{job}/publish` |
+| PATCH  | `/jobs/{job}/close`   |
+
+---
+
+# Application Routes
+
+| Method | Endpoint                               |
+| :----- | :------------------------------------- |
+| GET    | `/applications`                        |
+| POST   | `/applications`                        |
+| GET    | `/applications/check/{job}`            |
+| GET    | `/applications/{application}`          |
+| PATCH  | `/applications/{application}/withdraw` |
+
+---
+
+# Saved Job Routes
+
+| Method | Endpoint                  |
+| :----- | :------------------------ |
+| POST   | `/saved-jobs/{job}`       |
+| GET    | `/saved-jobs`             |
+| DELETE | `/saved-jobs/{job}`       |
+| GET    | `/saved-jobs/check/{job}` |
+
+---
+
+# Recruiter Application Management
+
+| Method | Endpoint                                       |
+| :----- | :--------------------------------------------- |
+| GET    | `/recruiter/applications`                      |
+| GET    | `/recruiter/applications/{application}`        |
+| PATCH  | `/recruiter/applications/{application}/status` |
+
+---
+
+# Industry Routes
+
+| Method | Endpoint      |
+| :----- | :------------ |
+| GET    | `/industries` |
+
+---
+
+# City Routes
+
+| Method | Endpoint  |
+| :----- | :-------- |
+| GET    | `/cities` |
+
+---
+
+# Dashboard Route
+
+| Method | Endpoint     |
+| :----- | :----------- |
+| GET    | `/dashboard` |
+
+---
+
+## HTTP Status Codes
+
+| Status Code | Description           |
+| :---------- | :-------------------- |
+| 200         | OK                    |
+| 201         | Created               |
+| 204         | No Content            |
+| 400         | Bad Request           |
+| 401         | Unauthorized          |
+| 403         | Forbidden             |
+| 404         | Not Found             |
+| 422         | Validation Error      |
+| 500         | Internal Server Error |
+
+---
+
+## Notes
+
+- All request and response bodies use **JSON**.
+- Protected endpoints require a valid **Laravel Sanctum** access token.
+- Validation errors return HTTP **422 Unprocessable Entity**.
+- Authentication and authorization are enforced on protected routes.
+- Public routes are accessible without authentication.
